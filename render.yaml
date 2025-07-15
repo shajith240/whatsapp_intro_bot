@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: whatsapp-intro-bot
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: META_APP_ID
+        sync: false
+      - key: WEBHOOK_VERIFY_TOKEN
+        sync: false
+      - key: WEBHOOK_SECRET
+        sync: false
+      - key: WEBHOOK_URL
+        sync: false
+      - key: TZ
+        value: Asia/Kolkata
+      - key: TARGET_GROUP_ID
+        sync: false
+      - key: MONITOR_GROUP_CHATS
+        value: true

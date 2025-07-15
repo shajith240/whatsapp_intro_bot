@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Introduction Validator - Manual Mode</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            border-radius: 10px;
+        }
+        .input-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #fafafa;
+        }
+        .message-input {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            resize: vertical;
+            margin: 10px 0;
+        }
+        .validate-btn {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        .validate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+        .clear-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .result {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .valid {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+        .invalid {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+        .info {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            color: #0c5460;
+            border: 2px solid #17a2b8;
+        }
+        .quick-tests {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .quick-test {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .quick-test:hover {
+            border-color: #25D366;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .quick-test h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .quick-test .message {
+            font-size: 12px;
+            color: #666;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 5px;
+            margin: 5px 0;
+            font-family: monospace;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+        .stat-valid { background: linear-gradient(135deg, #28a745, #20c997); }
+        .stat-invalid { background: linear-gradient(135deg, #dc3545, #fd7e14); }
+        .stat-total { background: linear-gradient(135deg, #007bff, #6f42c1); }
+        .instructions {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .current-time {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 WhatsApp Introduction Validator</h1>
+            <p>Manual Validation System for College Groups</p>
+            <div class="current-time" id="currentTime"></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card stat-total">
+                <h3 id="totalCount">0</h3>
+                <p>Total Validated</p>
+            </div>
+            <div class="stat-card stat-valid">
+                <h3 id="validCount">0</h3>
+                <p>Valid Introductions</p>
+            </div>
+            <div class="stat-card stat-invalid">
+                <h3 id="invalidCount">0</h3>
+                <p>Invalid Introductions</p>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <h3>📝 Enter Introduction Message</h3>
+            <p>Copy and paste the introduction message from WhatsApp group:</p>
+            <textarea id="messageInput" class="message-input" placeholder="Paste the introduction message here...
+
+Example:
+Good Evening Respected Seniors. My name is John Doe. I am from Mumbai, Maharashtra. I am pursuing Bachelor of Technology in Computer Science Engineering. My hobby is painting."></textarea>
+            
+            <div>
+                <button class="validate-btn" onclick="validateMessage()">🔍 Validate Introduction</button>
+                <button class="clear-btn" onclick="clearInput()">🗑️ Clear</button>
+            </div>
+        </div>
+
+        <div id="validationResult"></div>
+
+        <div class="input-section">
+            <h3>⚡ Quick Test Examples</h3>
+            <p>Click any example to test the validation:</p>
+            <div class="quick-tests">
+                <div class="quick-test" onclick="loadExample(this)">
+                    <h4>✅ Valid Morning Introduction</h4>
+                    <div class="message">Good Morning Respected Seniors. My name is John Doe. I am from Mumbai, Maharashtra. I am pursuing Bachelor of Technology in Computer Science Engineering. My hobby is painting.</div>
+                </div>
+                
+                <div class="quick-test" onclick="loadExample(this)">
+                    <h4>✅ Valid Evening Introduction</h4>
+                    <div class="message">Good Evening Respected Seniors. My name is Jane Smith. I am from Delhi, Delhi. I am pursuing Integrated Master of Technology in Electronics and Communication Engineering. My hobby is photography.</div>
+                </div>
+                
+                <div class="quick-test" onclick="loadExample(this)">
+                    <h4>❌ Wrong Capitalization</h4>
+                    <div class="message">Good Morning Respected Seniors. My name is john doe. I am from mumbai, maharashtra. I am pursuing Bachelor of Technology in computer science engineering. My hobby is painting.</div>
+                </div>
+                
+                <div class="quick-test" onclick="loadExample(this)">
+                    <h4>❌ Forbidden Hobby (Coding)</h4>
+                    <div class="message">Good Morning Respected Seniors. My name is John Doe. I am from Mumbai, Maharashtra. I am pursuing Bachelor of Technology in Computer Science Engineering. My hobby is coding.</div>
+                </div>
+                
+                <div class="quick-test" onclick="loadExample(this)">
+                    <h4>❌ Sports Hobby</h4>
+                    <div class="message">Good Morning Respected Seniors. My name is John Doe. I am from Mumbai, Maharashtra. I am pursuing Bachelor of Technology in Computer Science Engineering. My hobby is cricket.</div>
+                </div>
+                
+                <div class="quick-test" onclick="loadExample(this)">
+                    <h4>❌ Wrong Format</h4>
+                    <div class="message">Hello seniors, I am John from Mumbai studying computer science and my hobby is painting.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 How to Use This Manual Validator</h3>
+            <ol>
+                <li><strong>Monitor WhatsApp Group:</strong> Watch for new introduction messages</li>
+                <li><strong>Copy Message:</strong> Copy the introduction text from WhatsApp</li>
+                <li><strong>Paste & Validate:</strong> Paste here and click "Validate Introduction"</li>
+                <li><strong>Check Result:</strong> See if it's valid (👍) or invalid with specific errors</li>
+                <li><strong>Respond in Group:</strong> 
+                    <ul>
+                        <li>If <strong>Valid</strong>: React with 👍 or send welcome message</li>
+                        <li>If <strong>Invalid</strong>: Send "repeat" or explain the errors</li>
+                    </ul>
+                </li>
+            </ol>
+            
+            <h4>🕐 Time-Based Validation:</h4>
+            <p>The validator checks if the greeting matches the current time:</p>
+            <ul>
+                <li><strong>Morning (5 AM - 12 PM):</strong> "Good Morning Respected Seniors"</li>
+                <li><strong>Afternoon (12 PM - 5 PM):</strong> "Good Afternoon Respected Seniors"</li>
+                <li><strong>Evening (5 PM - 12 AM):</strong> "Good Evening Respected Seniors"</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Statistics tracking
+        let stats = {
+            total: 0,
+            valid: 0,
+            invalid: 0
+        };
+
+        // Load stats from localStorage
+        function loadStats() {
+            const saved = localStorage.getItem('validatorStats');
+            if (saved) {
+                stats = JSON.parse(saved);
+                updateStatsDisplay();
+            }
+        }
+
+        // Save stats to localStorage
+        function saveStats() {
+            localStorage.setItem('validatorStats', JSON.stringify(stats));
+        }
+
+        // Update stats display
+        function updateStatsDisplay() {
+            document.getElementById('totalCount').textContent = stats.total;
+            document.getElementById('validCount').textContent = stats.valid;
+            document.getElementById('invalidCount').textContent = stats.invalid;
+        }
+
+        // Update current time display
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('en-IN', {
+                timeZone: 'Asia/Kolkata',
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            const hour = now.getHours();
+            let expectedGreeting;
+            if (hour >= 5 && hour < 12) {
+                expectedGreeting = "Good Morning";
+            } else if (hour >= 12 && hour < 17) {
+                expectedGreeting = "Good Afternoon";
+            } else {
+                expectedGreeting = "Good Evening";
+            }
+            
+            document.getElementById('currentTime').innerHTML = 
+                `🕐 Current Time: ${timeString}<br>Expected Greeting: "${expectedGreeting} Respected Seniors"`;
+        }
+
+        // Validation logic (simplified version of your bot's logic)
+        function validateIntroduction(message) {
+            const errors = [];
+            const sentences = message.split('.').map(s => s.trim()).filter(s => s.length > 0);
+            
+            // Check sentence count
+            if (sentences.length !== 5) {
+                errors.push(`Expected exactly 5 sentences, found ${sentences.length}`);
+                return { isValid: false, errors };
+            }
+            
+            // Time-based greeting validation
+            const hour = new Date().getHours();
+            let expectedGreeting;
+            if (hour >= 5 && hour < 12) {
+                expectedGreeting = "Good Morning Respected Seniors";
+            } else if (hour >= 12 && hour < 17) {
+                expectedGreeting = "Good Afternoon Respected Seniors";
+            } else {
+                expectedGreeting = "Good Evening Respected Seniors";
+            }
+            
+            if (!sentences[0].startsWith(expectedGreeting)) {
+                errors.push(`Wrong greeting for current time. Expected: "${expectedGreeting}"`);
+            }
+            
+            // Name validation
+            if (!sentences[1].match(/^My name is [A-Z][a-zA-Z\s]+$/)) {
+                errors.push('Name format incorrect. Should be "My name is [Properly Capitalized Name]"');
+            }
+            
+            // Location validation
+            if (!sentences[2].match(/^I am from .+, .+$/)) {
+                errors.push('Location format incorrect. Should be "I am from [City], [State]"');
+            }
+            
+            // Education validation
+            if (!sentences[3].includes('I am pursuing') || !sentences[3].includes('Technology')) {
+                errors.push('Education format incorrect. Should mention "pursuing" and "Technology"');
+            }
+            
+            // Hobby validation
+            const hobbyText = sentences[4].toLowerCase();
+            const forbiddenHobbies = ['coding', 'programming', 'cricket', 'football', 'basketball', 'swimming', 'gym', 'sports'];
+            const foundForbidden = forbiddenHobbies.find(hobby => hobbyText.includes(hobby));
+            
+            if (foundForbidden) {
+                errors.push(`Forbidden hobby detected: "${foundForbidden}". Hobbies should be career-pursuable solo activities.`);
+            }
+            
+            if (!sentences[4].startsWith('My hobby is')) {
+                errors.push('Hobby format incorrect. Should be "My hobby is [hobby]"');
+            }
+            
+            // Check for multiple hobbies
+            if (hobbyText.includes(' and ') || hobbyText.includes(',')) {
+                errors.push('Only one hobby is allowed');
+            }
+            
+            return {
+                isValid: errors.length === 0,
+                errors: errors
+            };
+        }
+
+        function validateMessage() {
+            const message = document.getElementById('messageInput').value.trim();
+            const resultDiv = document.getElementById('validationResult');
+            
+            if (!message) {
+                resultDiv.innerHTML = '<div class="info">⚠️ Please enter an introduction message to validate.</div>';
+                return;
+            }
+            
+            const result = validateIntroduction(message);
+            
+            // Update statistics
+            stats.total++;
+            if (result.isValid) {
+                stats.valid++;
+            } else {
+                stats.invalid++;
+            }
+            saveStats();
+            updateStatsDisplay();
+            
+            if (result.isValid) {
+                resultDiv.innerHTML = `
+                    <div class="valid">
+                        <h3>✅ VALID INTRODUCTION</h3>
+                        <p><strong>✨ Perfect! This introduction meets all requirements.</strong></p>
+                        <p><strong>Action:</strong> React with 👍 in the WhatsApp group or send a welcome message.</p>
+                        <p><strong>Response suggestion:</strong> "Welcome to the group! 👋"</p>
+                    </div>
+                `;
+            } else {
+                const errorList = result.errors.map(error => `<li>${error}</li>`).join('');
+                resultDiv.innerHTML = `
+                    <div class="invalid">
+                        <h3>❌ INVALID INTRODUCTION</h3>
+                        <p><strong>Issues found:</strong></p>
+                        <ul>${errorList}</ul>
+                        <p><strong>Action:</strong> Send "repeat" in the WhatsApp group or provide specific feedback.</p>
+                        <p><strong>Response suggestion:</strong> "repeat" or explain the specific issues above.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('messageInput').value = '';
+            document.getElementById('validationResult').innerHTML = '';
+        }
+
+        function loadExample(element) {
+            const messageText = element.querySelector('.message').textContent;
+            document.getElementById('messageInput').value = messageText;
+            validateMessage();
+        }
+
+        // Initialize
+        loadStats();
+        updateCurrentTime();
+        setInterval(updateCurrentTime, 1000); // Update time every second
+    </script>
+</body>
+</html>
